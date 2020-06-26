@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a3fa30130a6803b419a323d6be3097f2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - HumanOperatorGUI: {fileID: 4619765811081868670, guid: 23ed675b7a5eb694498745e0c14b6e9d,
+      type: 3}
+  - gameManager: {instanceID: 0}
+  - Canvas: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

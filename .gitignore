@@ -6,7 +6,7 @@
 [Ll]ogs/
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
-# [Aa]ssets/AssetStoreTools*
+[Aa]ssets/AssetStoreTools*
 
 # Visual Studio cache directory
 .vs/
@@ -43,6 +43,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+.bin/
 
 # Crashlytics generated file
 crashlytics-build.properties

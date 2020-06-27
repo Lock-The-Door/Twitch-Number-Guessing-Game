@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     // Game Stuff
     private int currentNumber;
     public bool started = false;
+    bool displayingGuess = false;
 
     private GameObject openedControlPanel;
 
@@ -39,7 +40,6 @@ public class GameManager : MonoBehaviour
 
         // Start co-routines
         StartCoroutine(StartFunctions());
-        StartCoroutine(DisplayNextGuess());
     }
 
     IEnumerator StartFunctions()
@@ -77,6 +77,17 @@ public class GameManager : MonoBehaviour
         if (!started)
             return "The game is still starting please wait...";
 
+        // Start up co-routine if not running
+        if (!displayingGuess)
+        {
+            queuedGuesses.Enqueue(new KeyValuePair<string, int>(id, guess));
+            guessesUi.AddQueue(name + " - " + guess);
+
+            StartCoroutine(DisplayNextGuess());
+
+            return name + ", your guess of " + guess + " has been queued"; //Queued
+        }
+
         if (SingleGuessQueue)
         {
             Debug.LogWarning("Single Guess Enabled");
@@ -95,7 +106,8 @@ public class GameManager : MonoBehaviour
 
     IEnumerator DisplayNextGuess()
     {
-        yield return new WaitUntil(() => queuedGuesses.Count > 0);
+        displayingGuess = true;
+
         KeyValuePair<string, int> nextGuess = queuedGuesses.Dequeue();
         guessesUi.Dequeue();
 
@@ -133,8 +145,13 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(3);
 
-        DisplayBestGuess();
-        StartCoroutine(DisplayNextGuess());
+        if (queuedGuesses.Count > 0)
+            StartCoroutine(DisplayNextGuess());
+        else
+        {
+            DisplayBestGuess();
+            displayingGuess = false;
+        }
     }
 
     void UpdateLeaderboard(string id, LeaderboardUpdater.LeaderboardType type)

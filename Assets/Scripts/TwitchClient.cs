@@ -5,14 +5,16 @@ using TwitchLib.Api.Models.v5.Users;
 using TwitchLib.Client.Models;
 using TwitchLib.Unity;
 using UnityEngine;
-using System.Drawing;
+using TwitchLib.Api.Services;
+using TwitchLib.Api.Services.Events.FollowerService;
 
 public class TwitchClient : MonoBehaviour
 {
     public Client client;
-    //public static Api api;
-    public Api _api = new Api();
+    public Api api = new Api();
     private string channel_name = "second_120";
+    public FollowerService followerService;
+    public bool followerServiceReady = false;
 
     public GameObject HumanOperatorGUI;
 
@@ -35,13 +37,18 @@ public class TwitchClient : MonoBehaviour
             yield return new WaitUntil(() => SecretGetter.Api_Token != null);// If not editor wait for api token input
         Debug.LogError(SecretGetter.Api_Token);
 
+        Connect();
+    }
 
+    private void Connect()
+    {
         //Set up connection
         ConnectionCredentials connectionCredentials = new ConnectionCredentials("botty_120", SecretGetter.Api_Token);
         client = new Client();
-        _api.Settings.ClientId = SecretGetter.Client_id;
-        _api.Settings.AccessToken = SecretGetter.Api_Token;
+        api.Settings.ClientId = SecretGetter.Client_id;
+        api.Settings.AccessToken = SecretGetter.Api_Token;
         client.Initialize(connectionCredentials, channel_name, '!', '!', true);
+        followerService = new FollowerService(api, 10);
 
         //Bot Subscriptions
         client.OnMessageReceived += Client_OnMessageReceived;
@@ -49,7 +56,11 @@ public class TwitchClient : MonoBehaviour
         client.OnConnected += Client_OnConnected;
         client.OnDisconnected += Client_OnDisconnected;
 
+        followerService.OnServiceStarted += new System.EventHandler<OnServiceStartedArgs>(delegate (object sender, OnServiceStartedArgs e)
+        { followerServiceReady = true; });
+
         client.Connect(); //Connect
+        followerService.StartService();
         Debug.LogError("Connecting!");
     }
 
@@ -83,7 +94,7 @@ public class TwitchClient : MonoBehaviour
         if (e.ChatMessage.IsMe)
             return;
         string message = e.ChatMessage.Message;
-        UnityEngine.Color color = e.ChatMessage.Color.ToUnity();
+        Color color = e.ChatMessage.Color.ToUnity();
     }
 
     private GameObject HOGUIClone;
@@ -141,7 +152,7 @@ public class TwitchClient : MonoBehaviour
 
     public async Task<string> GetDisplayName(string id)
     {
-        User user = _api.Users.v5.GetUserByIDAsync(id).Result;
+        User user = api.Users.v5.GetUserByIDAsync(id).Result;
         return user.DisplayName;
     }
 }

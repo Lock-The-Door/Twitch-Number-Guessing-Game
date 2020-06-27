@@ -79,7 +79,7 @@ public class QueuedGuesses : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        if (queuedGuesses.ElementAt(guessesOnScreen - 1) == guess)// Shift in if necessary
+        if (queuedGuesses.Count >= guessesOnScreen && queuedGuesses.ElementAt(guessesOnScreen - 1) == guess)// Shift in if necessary
             StartCoroutine(LerpGuess(guess, false));
     }
 }

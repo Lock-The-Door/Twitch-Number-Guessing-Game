@@ -64,7 +64,7 @@ public class BackgroundMusicManager : MonoBehaviour
 
     IEnumerator changeMusicInfoText(string newtext)
     {
-        var start = 1695;
+        var start = 1730;
         var destination = 2095;
         yield return moveGui(destination);
         musicInfoText.text = newtext;

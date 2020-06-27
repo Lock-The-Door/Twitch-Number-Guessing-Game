@@ -31,7 +31,7 @@ public class LeaderboardUpdater : MonoBehaviour
 
     IEnumerator LeaderboardSwitcher()
     {
-        yield return new WaitUntil(() => tc._api.Settings.AccessToken != null);
+        yield return new WaitUntil(() => tc.api.Settings.AccessToken != null);
         while (true)
         {
             LoadLeaderboard(LeaderboardType.MostWins);

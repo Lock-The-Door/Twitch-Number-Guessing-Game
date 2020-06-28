@@ -77,17 +77,6 @@ public class GameManager : MonoBehaviour
         if (!started)
             return "The game is still starting please wait...";
 
-        // Start up co-routine if not running
-        if (!displayingGuess)
-        {
-            queuedGuesses.Enqueue(new KeyValuePair<string, int>(id, guess));
-            guessesUi.AddQueue(name + " - " + guess);
-
-            StartCoroutine(DisplayNextGuess());
-
-            return name + ", your guess of " + guess + " has been queued"; //Queued
-        }
-
         if (SingleGuessQueue)
         {
             Debug.LogWarning("Single Guess Enabled");
@@ -100,6 +89,12 @@ public class GameManager : MonoBehaviour
         }
         queuedGuesses.Enqueue(new KeyValuePair<string, int>(id, guess));
         guessesUi.AddQueue(name + " - " + guess);
+
+        // Start up co-routine if not running
+        if (!displayingGuess)
+        {
+            StartCoroutine(DisplayNextGuess());
+        }
 
         return name + ", your guess of " + guess + " has been queued"; //Queued
     }
@@ -149,8 +144,8 @@ public class GameManager : MonoBehaviour
             StartCoroutine(DisplayNextGuess());
         else
         {
-            DisplayBestGuess();
             displayingGuess = false;
+            DisplayBestGuess();
         }
     }
 
@@ -204,6 +199,8 @@ public class GameManager : MonoBehaviour
         infoText.text = "Starting next game...";
         commandInfoText.text = "Get ready to !guess";
 
+        // Reset displaying guesses state
+        displayingGuess = false;
 
         // Clear the guess queue and reset the best guess
         queuedGuesses.Clear();
@@ -221,14 +218,14 @@ public class GameManager : MonoBehaviour
         currentNumber = predefinedNumber;
         generatedBar.SendMessage("ChangeValue", predefinedNumber);
         generatedBarText.text = "The Unknown Number";
-
         yield return new WaitForSeconds(1);
         yield return new WaitUntil(() => generatedBar.GetComponent<ChangeBarValue>().idle && guessBar.GetComponent<ChangeBarValue>().idle);
 
+        // Set the text
         infoText.text = "No Guesses! Be the first to guess!";
         commandInfoText.text = "Guess with !guess";
-        started = true;
 
-        StartCoroutine(DisplayNextGuess());
+        // Started!!!
+        started = true;
     }
 }

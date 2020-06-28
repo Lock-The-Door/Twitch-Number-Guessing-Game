@@ -51,7 +51,6 @@ public class TwitchClient : MonoBehaviour
         followerService = new FollowerService(api, 10);
 
         //Bot Subscriptions
-        client.OnMessageReceived += Client_OnMessageReceived;
         client.OnChatCommandReceived += Client_OnChatCommandReceived;
         client.OnConnected += Client_OnConnected;
         client.OnDisconnected += Client_OnDisconnected;
@@ -86,15 +85,6 @@ public class TwitchClient : MonoBehaviour
                 Music(e.Command.ChatMessage.Channel);
                 break;
         }
-    }
-
-    private void Client_OnMessageReceived(object sender, TwitchLib.Client.Events.OnMessageReceivedArgs e)
-    {
-        Debug.LogError("Reached Other");
-        if (e.ChatMessage.IsMe)
-            return;
-        string message = e.ChatMessage.Message;
-        Color color = e.ChatMessage.Color.ToUnity();
     }
 
     private GameObject HOGUIClone;

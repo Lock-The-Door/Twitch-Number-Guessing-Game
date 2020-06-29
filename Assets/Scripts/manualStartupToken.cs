@@ -8,6 +8,11 @@ public class manualStartupToken : MonoBehaviour
     {
         if (Application.isEditor)
             Destroy(gameObject);
+        else if (PlayerPrefs.HasKey("API_TOKEN"))
+        {
+            SecretGetter.Api_Token = PlayerPrefs.GetString("API_TOKEN");
+            Destroy(gameObject);
+        }
         else
             Debug.Log(SecretGetter.Api_Token);
     }
@@ -22,6 +27,7 @@ public class manualStartupToken : MonoBehaviour
     void UpdateToken()
     {
         SecretGetter.Api_Token = gameObject.GetComponent<InputField>().text;
+        PlayerPrefs.SetString("API_TOKEN", SecretGetter.Api_Token);
         Destroy(gameObject);
     }
 }

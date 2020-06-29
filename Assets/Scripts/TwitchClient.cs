@@ -35,7 +35,7 @@ public class TwitchClient : MonoBehaviour
         if (!Application.isEditor)
             Debug.Log(SecretGetter.Api_Token);
             yield return new WaitUntil(() => SecretGetter.Api_Token != null);// If not editor wait for api token input
-        Debug.LogError(SecretGetter.Api_Token);
+        Debug.Log(SecretGetter.Api_Token);
 
         Connect();
     }
@@ -60,22 +60,22 @@ public class TwitchClient : MonoBehaviour
 
         client.Connect(); //Connect
         followerService.StartService();
-        Debug.LogError("Connecting!");
+        Debug.Log("Connecting!");
     }
 
     private void Client_OnDisconnected(object sender, TwitchLib.Client.Events.OnDisconnectedArgs e)
     {
-        Debug.LogError("Disconnected!");
+        Debug.Log("Disconnected!");
     }
 
     private void Client_OnConnected(object sender, TwitchLib.Client.Events.OnConnectedArgs e)
     {
-        Debug.LogError("Connected!");
+        Debug.Log("Connected!");
     }
 
     private void Client_OnChatCommandReceived(object sender, TwitchLib.Client.Events.OnChatCommandReceivedArgs e)
     {
-        Debug.LogError("Command entered");
+        Debug.Log("Command entered");
         switch (e.Command.CommandText)
         {
             case "guess":

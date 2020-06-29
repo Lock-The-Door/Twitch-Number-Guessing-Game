@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     // Objects and Stuff
+    public Camera camera;
     public LeaderboardUpdater LeaderboardUpdater;
     public QueuedGuesses guessesUi;
     public TwitchClient tc;
@@ -61,6 +62,8 @@ public class GameManager : MonoBehaviour
                 var settingsScript = openedControlPanel.GetComponent<SettingsUpdater>();
                 settingsScript.limitGuesses.isOn = SingleGuessQueue;
                 settingsScript.GameManager = gameObject.GetComponent<GameManager>();
+                settingsScript.GetComponent<Canvas>().worldCamera = camera;
+                settingsScript.GetComponent<Canvas>().planeDistance = 2;
             }
             else
             {

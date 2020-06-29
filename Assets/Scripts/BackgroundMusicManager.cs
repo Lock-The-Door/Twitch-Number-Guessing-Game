@@ -64,8 +64,8 @@ public class BackgroundMusicManager : MonoBehaviour
 
     IEnumerator changeMusicInfoText(string newtext)
     {
-        var start = 1730;
-        var destination = 2095;
+        var start = 770;
+        var destination = 1130;
         yield return moveGui(destination);
         musicInfoText.text = newtext;
         yield return moveGui(start);
@@ -73,11 +73,11 @@ public class BackgroundMusicManager : MonoBehaviour
 
     IEnumerator moveGui(float destination)
     {
-        float start = musicInfoText.rectTransform.position.x;
+        float start = musicInfoText.rectTransform.localPosition.x;
         float time = 0;
         while (time < 1)
         {
-            musicInfoText.rectTransform.position = new Vector3(Mathf.SmoothStep(start, destination, time), musicInfoText.rectTransform.position.y);
+            musicInfoText.rectTransform.localPosition = new Vector3(Mathf.SmoothStep(start, destination, time), musicInfoText.rectTransform.localPosition.y, 0);
             time += Time.deltaTime * guiMoveSpeed;
             yield return new WaitForFixedUpdate();
         }

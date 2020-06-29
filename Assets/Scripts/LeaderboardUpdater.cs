@@ -90,8 +90,7 @@ public class LeaderboardUpdater : MonoBehaviour
                 break;
         }
 
-        leaderboardType = type;
-        StartCoroutine(changeLeaderboardInfoText(leaderboard, leaderboardType));
+        StartCoroutine(changeLeaderboardInfoText(leaderboard, type));
     }
 
     IEnumerator changeLeaderboardInfoText(string newtext, LeaderboardType type)
@@ -100,8 +99,9 @@ public class LeaderboardUpdater : MonoBehaviour
             Leaderboard.text = newtext;
         else
         {
-            var start = 125;
-            var destination = -300;
+            leaderboardType = type;
+            var start = -835;
+            var destination = -1605;
             yield return moveGui(destination);
             Leaderboard.text = newtext;
             yield return moveGui(start);
@@ -110,11 +110,11 @@ public class LeaderboardUpdater : MonoBehaviour
 
     IEnumerator moveGui(float destination)
     {
-        float start = Leaderboard.rectTransform.position.x;
+        float start = Leaderboard.rectTransform.localPosition.x;
         float time = 0;
         while (time < 1)
         {
-            Leaderboard.rectTransform.position = new Vector3(Mathf.SmoothStep(start, destination, time), Leaderboard.rectTransform.position.y);
+            Leaderboard.rectTransform.localPosition = new Vector3(Mathf.SmoothStep(start, destination, time), Leaderboard.rectTransform.localPosition.y, 0);
             time += Time.deltaTime * guiMoveSpeed;
             yield return new WaitForFixedUpdate();
         }
@@ -159,7 +159,7 @@ public class LeaderboardUpdater : MonoBehaviour
             Debug.Log("Data loaded!");
         }
         else
-            Debug.LogError("There is no data!");
+            Debug.LogWarning("There is no data!");
     }
 
     public bool save = true;

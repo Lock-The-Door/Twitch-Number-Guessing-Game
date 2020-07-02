@@ -58,7 +58,18 @@ public class TwitchAlerts : MonoBehaviour
 
     private void Client_OnReSubscriber(object sender, TwitchLib.Client.Events.OnReSubscriberArgs e)
     {
-        throw new System.NotImplementedException();
+        if (e.Channel != tc.client.JoinedChannels[0].Channel)
+            return;
+
+        string subscriptionMessage = $"{e.ReSubscriber.DisplayName} just resubscribed ";
+        subscriptionMessage += e.ReSubscriber.SubscriptionPlan == SubscriptionPlan.Prime ? "with Twitch Prime!" : "at " + e.ReSubscriber.SubscriptionPlanName + "!!!";
+
+        Alert alert = new Alert()
+        {
+            alert = subscriptionMessage,
+            message = null
+        };
+        QueueAlert(alert);
     }
 
     private void Client_OnNewSubscriber(object sender, TwitchLib.Client.Events.OnNewSubscriberArgs e)

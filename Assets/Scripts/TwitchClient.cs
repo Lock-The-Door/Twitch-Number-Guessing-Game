@@ -20,6 +20,7 @@ public class TwitchClient : MonoBehaviour
 
     public GameManager gameManager;
     public BackgroundMusicManager musicManager;
+    public TwitchAlerts twitchAlerts;
 
     void Start()
     {
@@ -54,12 +55,31 @@ public class TwitchClient : MonoBehaviour
         client.OnConnected += Client_OnConnected;
         client.OnDisconnected += Client_OnDisconnected;
 
+        client.OnBeingHosted += Client_OnBeingHosted;
+        client.OnHostingStopped += Client_OnHostingStopped;
+
         followerService.OnServiceStarted += new System.EventHandler<OnServiceStartedArgs>(delegate (object sender, OnServiceStartedArgs e)
         { followerServiceReady = true; });
 
         client.Connect(); //Connect
         followerService.StartService();
         Debug.Log("Connecting!");
+    }
+
+    private void Client_OnHostingStopped(object sender, TwitchLib.Client.Events.OnHostingStoppedArgs e)
+    {
+        client.LeaveChannel(e.HostingStopped.HostingChannel);
+    }
+
+    private void Client_OnBeingHosted(object sender, TwitchLib.Client.Events.OnBeingHostedArgs e)
+    {
+        client.JoinChannel(e.BeingHostedNotification.Channel);
+
+        Alert alert = new Alert()
+        {
+            alert = $"{e.BeingHostedNotification.Channel} is now hosting with {e.BeingHostedNotification.Viewers} viewers!",
+            message = null
+        };
     }
 
     private void Client_OnDisconnected(object sender, TwitchLib.Client.Events.OnDisconnectedArgs e)
@@ -81,6 +101,8 @@ public class TwitchClient : MonoBehaviour
                 Guess(e.Command.ArgumentsAsString, e.Command.ChatMessage.UserId, e.Command.ChatMessage.Channel);
                 break;
             case "music":
+                if (e.Command.ChatMessage.Channel != client.JoinedChannels[0].Channel) // Don't respond in other channels
+                    return;
                 Music(e.Command.ChatMessage.Channel);
                 break;
         }

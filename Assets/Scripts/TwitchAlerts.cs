@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using TMPro;
 using TwitchLib.Api.Interfaces;
 using TwitchLib.Api.Models.v5.Channels;
 using TwitchLib.Client.Enums;
+using TwitchLib.Client.Extensions;
 using UnityEngine;
 
 
-class Alert
+public class Alert
 {
     public string alert;
     public string message;
@@ -32,6 +35,14 @@ public class TwitchAlerts : MonoBehaviour
     {
         StartCoroutine(WaitAndSubscribe());
     }
+
+    /*private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            tc.client.InvokeNewSubscriber(new List<KeyValuePair<string, string>>(), "000000", System.Drawing.Color.Black, "TestSubscriber", "test", "000000", "test", "test", "test", "test", SubscriptionPlan.Tier1, "Tier 1", "test", "test", false, false, true, false, "test", UserType.Viewer, "test", "test");
+        }
+    }*/
 
     IEnumerator WaitAndSubscribe()
     {
@@ -80,7 +91,7 @@ public class TwitchAlerts : MonoBehaviour
         }
     }
 
-    void QueueAlert(Alert alert)
+    public void QueueAlert(Alert alert)
     {
         if (!displayingAlert)
         {

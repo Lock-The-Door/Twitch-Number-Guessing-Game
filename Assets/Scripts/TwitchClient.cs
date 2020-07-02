@@ -26,7 +26,6 @@ public class TwitchClient : MonoBehaviour
         Application.runInBackground = true;
 
         StartCoroutine(WaitAndConnect());
-        //WaitAndConnect();
     }
 
     IEnumerator WaitAndConnect()

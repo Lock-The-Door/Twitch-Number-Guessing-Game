@@ -117,6 +117,8 @@ public class TwitchAlerts : MonoBehaviour
     {
         displayingAlert = true;
 
+        Debug.Log(alert.alert);
+
         gameObject.GetComponent<TextMeshProUGUI>().text = alert.alert;
         gameObject.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = alert.message;
 

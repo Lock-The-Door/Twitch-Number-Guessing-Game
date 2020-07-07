@@ -49,6 +49,7 @@ public class TwitchClient : MonoBehaviour
         api.Settings.AccessToken = SecretGetter.Api_Token;
         client.Initialize(connectionCredentials, channel_name, '!', '!', true);
         followerService = new FollowerService(api, 10);
+        client.OverrideBeingHostedCheck = true;
 
         //Bot Subscriptions
         client.OnChatCommandReceived += Client_OnChatCommandReceived;
@@ -68,18 +69,24 @@ public class TwitchClient : MonoBehaviour
 
     private void Client_OnHostingStopped(object sender, TwitchLib.Client.Events.OnHostingStoppedArgs e)
     {
+        if (e.HostingStopped.HostingChannel == client.JoinedChannels[0].Channel)
+            return;
+
+        Debug.Log("We're no longer being hosted by " + e.HostingStopped.HostingChannel);
         client.LeaveChannel(e.HostingStopped.HostingChannel);
     }
 
     private void Client_OnBeingHosted(object sender, TwitchLib.Client.Events.OnBeingHostedArgs e)
     {
-        client.JoinChannel(e.BeingHostedNotification.Channel);
+        Debug.Log("We're being hosted by " + e.BeingHostedNotification.HostedByChannel);
+        client.JoinChannel(e.BeingHostedNotification.HostedByChannel);
 
         Alert alert = new Alert()
         {
-            alert = $"{e.BeingHostedNotification.Channel} is now hosting with {e.BeingHostedNotification.Viewers} viewers!",
+            alert = $"{e.BeingHostedNotification.HostedByChannel} is now hosting with {e.BeingHostedNotification.Viewers} viewers!",
             message = null
         };
+        twitchAlerts.QueueAlert(alert);
     }
 
     private void Client_OnDisconnected(object sender, TwitchLib.Client.Events.OnDisconnectedArgs e)

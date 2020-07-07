@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -92,6 +93,9 @@ public class TwitchAlerts : MonoBehaviour
     {
         foreach (IFollow newFollower in e.NewFollowers)
         {
+            Debug.Log(newFollower.User + " has followed!");
+            tc.client.SendMessage(e.ChannelData, "Thanks for following " + newFollower.User + "!");
+
             Alert alert = new Alert
             {
                 alert = newFollower.User.DisplayName + " just followed!",
@@ -117,7 +121,7 @@ public class TwitchAlerts : MonoBehaviour
     {
         displayingAlert = true;
 
-        Debug.Log(alert.alert);
+        Debug.Log(alert.alert + DateTime.Now);
 
         gameObject.GetComponent<TextMeshProUGUI>().text = alert.alert;
         gameObject.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = alert.message;

@@ -2658,6 +2658,7 @@ MonoBehaviour:
     type: 3}
   gameManager: {fileID: 1357403801}
   musicManager: {fileID: 1097028853}
+  twitchAlerts: {fileID: 607686967}
   Canvas: {fileID: 205845666}
 --- !u!4 &831379312
 Transform:

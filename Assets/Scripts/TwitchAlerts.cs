@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using TMPro;
 using TwitchLib.Api.Interfaces;
-using TwitchLib.Api.Models.v5.Channels;
 using TwitchLib.Client.Enums;
-using TwitchLib.Client.Extensions;
 using UnityEngine;
 
 

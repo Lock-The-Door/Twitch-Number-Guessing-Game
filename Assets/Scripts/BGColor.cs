@@ -8,7 +8,7 @@ public class BGColor : MonoBehaviour
         Cycle
     }
 
-    private Camera camera;
+    private new Camera camera;
     public BackgroundColorMode mode;
     public float brightness;
     public float colorShiftSpeed;

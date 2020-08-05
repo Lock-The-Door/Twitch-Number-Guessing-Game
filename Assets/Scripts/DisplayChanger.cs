@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DisplayChanger : MonoBehaviour
 {
-    public Camera camera;
+    public new Camera camera;
 
     private void Start()
     {

@@ -168,9 +168,9 @@ public class TwitchClient : MonoBehaviour
         client.SendMessage(channel, $"Listen to {playing.Title} at {playing.Link} or check out more of {playing.Artist.Name}'s songs at {playing.Artist.Link}");
     }
 
-    public async Task<string> GetDisplayName(string id)
+    public Task<string> GetDisplayName(string id)
     {
         User user = api.Users.v5.GetUserByIDAsync(id).Result;
-        return user.DisplayName;
+        return Task.FromResult(user.DisplayName);
     }
 }

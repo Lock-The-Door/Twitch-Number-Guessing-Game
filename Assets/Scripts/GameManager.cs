@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     // Objects and Stuff
-    public Camera camera;
+    public new Camera camera;
     public LeaderboardUpdater LeaderboardUpdater;
     public QueuedGuesses guessesUi;
     public TwitchClient tc;

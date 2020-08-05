@@ -9,31 +9,27 @@ env:
 
 jobs:
   testAllModes:
-    name: Test in ${{ matrix.testMode }} on version ${{ matrix.unityVersion }}
-    runs-on: windows-latest
+    name: Test
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         unityVersion:
-          - 2019.4.6f1
+          - 2019.4.6f1-windows-update-2020-07-30
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
       - uses: actions/cache@v1.1.0
         with:
-          path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}
+          path: /Library
+          key: Library-/
           restore-keys: |
             Library-
       - uses: webbertakken/unity-test-runner@v1.4
-        id: tests
         with:
-          projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
-          testMode: ${{ matrix.testMode }}
-          artifactsPath: ${{ matrix.testMode }}-artifacts
       - uses: actions/upload-artifact@v1
         with:
-          name: Test results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.artifactsPath }}
+          name: Test results
+          path: artifacts

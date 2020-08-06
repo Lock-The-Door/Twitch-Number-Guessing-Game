@@ -31,7 +31,7 @@ public class BackgroundMusicManager : MonoBehaviour
 
     IEnumerator musicLoop(int i)
     {
-        Debug.Log("Playing next music on queue...");
+        //Debug.Log("Playing next music on queue...");
         Music musicInfo = musicList[i];
         AudioSource audio = musicInfo.AudioSource;
         audio.Play();

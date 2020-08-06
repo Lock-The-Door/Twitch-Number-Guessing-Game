@@ -5,6 +5,7 @@ using TwitchLib.Api.Models.v5.Users;
 using TwitchLib.Client.Models;
 using TwitchLib.Unity;
 using UnityEngine;
+using TwitchLib.Api.Services;
 
 public class TwitchClient : MonoBehaviour
 {
@@ -57,16 +58,26 @@ public class TwitchClient : MonoBehaviour
         client.OnBeingHosted += Client_OnBeingHosted;
         client.OnHostingStopped += Client_OnHostingStopped;
 
-        // Get User Id
-        string userId = "";
-        api.InvokeAsync(api.Users.helix.GetUsersAsync(logins: new System.Collections.Generic.List<string>() { channel_name }), users => { userId = users.Users[0].Id; });
+        SubscribeToPubSub();
+        
+        client.Connect(); //Connect
+        Debug.Log("Connecting!");
+    }
+
+    private void SubscribeToPubSub()
+    {
+        Debug.Log("Ready to listen (PubSub)");
+
+        // We'll assume the request went well and that we made no typo's, meaning we should have 1 user at index 0
+        string userId = api.Users.v5.GetUserByNameAsync(channel_name).Result.Matches[0].Id;
+
+        Debug.Log(userId);
 
         // Channel PubSub subscriptions
         pubSub.ListenToFollows(userId);
         pubSub.ListenToSubscriptions(userId);
 
-        client.Connect(); //Connect
-        Debug.Log("Connecting!");
+        Debug.Log("Listening to PubSub...");
     }
 
     private void Client_OnHostingStopped(object sender, TwitchLib.Client.Events.OnHostingStoppedArgs e)

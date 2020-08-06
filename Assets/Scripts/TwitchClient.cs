@@ -5,7 +5,6 @@ using TwitchLib.Api.Models.v5.Users;
 using TwitchLib.Client.Models;
 using TwitchLib.Unity;
 using UnityEngine;
-using TwitchLib.Api.Services;
 
 public class TwitchClient : MonoBehaviour
 {

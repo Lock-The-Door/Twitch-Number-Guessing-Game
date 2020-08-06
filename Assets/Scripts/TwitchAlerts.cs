@@ -48,9 +48,49 @@ public class TwitchAlerts : MonoBehaviour
         yield return new WaitUntil(() => tc.followerServiceReady);
 
         // Subscribe to events
-        tc.followerService.OnNewFollowersDetected += FollowerService_OnNewFollowersDetected;
-        tc.client.OnNewSubscriber += Client_OnNewSubscriber;
-        tc.client.OnReSubscriber += Client_OnReSubscriber;
+        tc.pubSub.OnFollow += PubSub_OnFollow;
+        tc.pubSub.OnChannelSubscription += PubSub_OnChannelSubscription;
+    }
+
+    private void PubSub_OnChannelSubscription(object sender, TwitchLib.PubSub.Events.OnChannelSubscriptionArgs e)
+    {
+        string subscriptionMessage = $"{e.Subscription.RecipientDisplayName} just subscribed for {e.Subscription.Months} months ";
+        
+        switch (e.Subscription.SubscriptionPlan)
+        {
+            case TwitchLib.PubSub.Enums.SubscriptionPlan.Prime:
+                subscriptionMessage += "with Twitch Prime!";
+                break;
+            case TwitchLib.PubSub.Enums.SubscriptionPlan.Tier1:
+                subscriptionMessage += "at Tier 1!!";
+                break;
+            case TwitchLib.PubSub.Enums.SubscriptionPlan.Tier2:
+                subscriptionMessage += "at Tier 2!!!";
+                break;
+            case TwitchLib.PubSub.Enums.SubscriptionPlan.Tier3:
+                subscriptionMessage += "at Tier 3!!!!!!";
+                break;
+        }
+
+        Alert alert = new Alert()
+        {
+            alert = subscriptionMessage,
+            message = e.Subscription.SubMessage.Message
+        };
+        QueueAlert(alert);
+    }
+
+    private void PubSub_OnFollow(object sender, TwitchLib.PubSub.Events.OnFollowArgs e)
+    {
+        Debug.Log(e.DisplayName + " has followed!");
+
+        Alert alert = new Alert
+        {
+            alert = e.DisplayName + " just followed!",
+            message = null
+        };
+
+        QueueAlert(alert);
     }
 
     private void Client_OnReSubscriber(object sender, TwitchLib.Client.Events.OnReSubscriberArgs e)
@@ -67,39 +107,6 @@ public class TwitchAlerts : MonoBehaviour
             message = null
         };
         QueueAlert(alert);
-    }
-
-    private void Client_OnNewSubscriber(object sender, TwitchLib.Client.Events.OnNewSubscriberArgs e)
-    {
-        if (e.Channel != tc.client.JoinedChannels[0].Channel)
-            return;
-
-        string subscriptionMessage = $"{e.Subscriber.DisplayName} just subscribed ";
-        subscriptionMessage += e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime ? "with Twitch Prime!" : "at " + e.Subscriber.SubscriptionPlanName + "!!!";
-
-        Alert alert = new Alert()
-        {
-            alert = subscriptionMessage,
-            message = null
-        };
-        QueueAlert(alert);
-    }
-
-    private void FollowerService_OnNewFollowersDetected(object sender, TwitchLib.Api.Services.Events.FollowerService.OnNewFollowersDetectedArgs e)
-    {
-        foreach (IFollow newFollower in e.NewFollowers)
-        {
-            Debug.Log(newFollower.User + " has followed!");
-            tc.client.SendMessage(e.ChannelData, "Thanks for following " + newFollower.User + "!");
-
-            Alert alert = new Alert
-            {
-                alert = newFollower.User.DisplayName + " just followed!",
-                message = null
-            };
-
-            QueueAlert(alert);
-        }
     }
 
     public void QueueAlert(Alert alert)

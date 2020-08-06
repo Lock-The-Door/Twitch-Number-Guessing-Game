@@ -15,6 +15,7 @@ public class TwitchClient : MonoBehaviour
     private string channel_name = "second_120";
     public FollowerService followerService;
     public bool followerServiceReady = false;
+    public PubSub pubSub = new PubSub();
 
     public GameObject HumanOperatorGUI;
 
@@ -50,6 +51,7 @@ public class TwitchClient : MonoBehaviour
         client.Initialize(connectionCredentials, channel_name, '!', '!', true);
         followerService = new FollowerService(api, 10);
         client.OverrideBeingHostedCheck = true;
+        pubSub.Connect();
 
         //Bot Subscriptions
         client.OnChatCommandReceived += Client_OnChatCommandReceived;
@@ -59,8 +61,13 @@ public class TwitchClient : MonoBehaviour
         client.OnBeingHosted += Client_OnBeingHosted;
         client.OnHostingStopped += Client_OnHostingStopped;
 
-        followerService.OnServiceStarted += new System.EventHandler<OnServiceStartedArgs>(delegate (object sender, OnServiceStartedArgs e)
-        { followerServiceReady = true; });
+        // Get User Id
+        string userId = "";
+        api.InvokeAsync(api.Users.helix.GetUsersAsync(logins: new System.Collections.Generic.List<string>() { channel_name }), users => { userId = users.Users[0].Id; });
+
+        // Channel PubSub subscriptions
+        pubSub.ListenToFollows(userId);
+        pubSub.ListenToSubscriptions(userId);
 
         client.Connect(); //Connect
         followerService.StartService();

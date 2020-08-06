@@ -45,7 +45,7 @@ public class TwitchAlerts : MonoBehaviour
     {
         // Wait for everything to be ready
         yield return new WaitUntil(() => tc.api.Settings.AccessToken != null);
-        yield return new WaitUntil(() => tc.followerServiceReady);
+        yield return new WaitUntil(() => tc.pubSub != null);
 
         // Subscribe to events
         tc.pubSub.OnFollow += PubSub_OnFollow;

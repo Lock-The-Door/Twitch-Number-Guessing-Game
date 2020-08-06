@@ -6,16 +6,13 @@ using TwitchLib.Client.Models;
 using TwitchLib.Unity;
 using UnityEngine;
 using TwitchLib.Api.Services;
-using TwitchLib.Api.Services.Events.FollowerService;
 
 public class TwitchClient : MonoBehaviour
 {
     public Client client;
     public Api api = new Api();
     private string channel_name = "second_120";
-    public FollowerService followerService;
-    public bool followerServiceReady = false;
-    public PubSub pubSub = new PubSub();
+    public PubSub pubSub;
 
     public GameObject HumanOperatorGUI;
 
@@ -46,10 +43,10 @@ public class TwitchClient : MonoBehaviour
         //Set up connection
         ConnectionCredentials connectionCredentials = new ConnectionCredentials("botty_120", SecretGetter.Api_Token);
         client = new Client();
+        pubSub = new PubSub();
         api.Settings.ClientId = SecretGetter.Client_id;
         api.Settings.AccessToken = SecretGetter.Api_Token;
         client.Initialize(connectionCredentials, channel_name, '!', '!', true);
-        followerService = new FollowerService(api, 10);
         client.OverrideBeingHostedCheck = true;
         pubSub.Connect();
 
@@ -70,7 +67,6 @@ public class TwitchClient : MonoBehaviour
         pubSub.ListenToSubscriptions(userId);
 
         client.Connect(); //Connect
-        followerService.StartService();
         Debug.Log("Connecting!");
     }
 

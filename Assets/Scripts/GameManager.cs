@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour
         UpdateLeaderboard(nextGuess.Key, LeaderboardUpdater.LeaderboardType.MostGuesses); // Update Leaderboard
 
         yield return new WaitForSeconds(1);
-        yield return new WaitUntil(() => guessBar.GetComponent<ChangeBarValue>().idle);
+        yield return new WaitUntil(() => guessBar.GetComponent<Change3DBarValue>().idle);
         yield return new WaitForSeconds(1);
         if (nextGuess.Value == currentNumber) // The number is correct, restart
         {

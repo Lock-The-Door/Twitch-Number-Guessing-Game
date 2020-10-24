@@ -35,10 +35,8 @@ public class BackgroundMusicManager : MonoBehaviour
         Music musicInfo = musicList[i];
         AudioSource audio = musicInfo.AudioSource;
         audio.Play();
-        playing = musicInfo;
-        StartCoroutine(changeMusicInfoText("Now Playing\n" + musicInfo.Title + "\nBy " + musicInfo.Artist.Name));
+        musicInfoText.text = $"{musicInfo.Title}\nby {musicInfo.Artist.Name}";
         double length = audio.clip.samples / audio.clip.frequency;
-        StartCoroutine(advertiseMusicCommand(length));
         yield return new WaitForSecondsRealtime(Convert.ToSingle(length + 2));
         if (++i == musicList.Count)
             i = 0;

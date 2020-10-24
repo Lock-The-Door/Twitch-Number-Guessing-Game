@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,7 +16,13 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI generatedBarText;
     public GameObject guessBar;
     public TextMeshProUGUI guessBarText;
-    public TextMeshProUGUI infoText;
+    public TextMeshProUGUI guessNumberText;
+    public TextMeshProUGUI guesserText;
+    public TextMeshProUGUI guessVerifyText;
+    public Image guessVerifyColour;
+    public Color colourIncorrect = new Color(0.8901961f, 0.2470588f, 0.4156863f);
+    public Color colourCorrect = new Color(0.4196078f, 0.8862745f, 0.2470588f);
+    public Color colourYield = new Color(0.8862745f, 0.7176471f, 0.2470588f);
     public TextMeshProUGUI commandInfoText;
 
     // Settings
@@ -111,8 +118,11 @@ public class GameManager : MonoBehaviour
 
         string name = tc.GetDisplayName(nextGuess.Key).Result;
 
-        infoText.text = $"{name} guessed {nextGuess.Value}!!!";
+        guesserText.text = $"{name} guessed:";
+        guessNumberText.text = nextGuess.Value.ToString();
         guessBarText.text = $"{name}'s guess";
+        guessVerifyText.text = "...";
+        guessVerifyColour.color = colourYield;
         guessBar.SendMessage("ChangeValue", nextGuess.Value);
 
         UpdateLeaderboard(nextGuess.Key, LeaderboardUpdater.LeaderboardType.MostGuesses); // Update Leaderboard
@@ -123,18 +133,21 @@ public class GameManager : MonoBehaviour
         if (nextGuess.Value == currentNumber) // The number is correct, restart
         {
             UpdateLeaderboard(nextGuess.Key, LeaderboardUpdater.LeaderboardType.MostWins); // Update Leaderboard
-            infoText.text = $"And {nextGuess.Value} is correct! {name} has guessed the number and wins!!!";
+            guessVerifyText.text = "Correct!";
+            guessVerifyColour.color = colourCorrect;
             generatedBarText.text = "The number was " + currentNumber;
             guessBarText.text = name + " won!";
             yield return new WaitForSeconds(5);
-            infoText.text = "Restarting...";
+            guessVerifyText.text = "Restarting...";
+            guessVerifyColour.color = colourYield;
             yield return new WaitForSeconds(2);
             StopAndRestart();
         }
         else
         {
-            string highOrLow = nextGuess.Value > currentNumber ? "high" : "small";
-            infoText.text = $"But {nextGuess.Value} is too {highOrLow}!";
+            string highOrLow = nextGuess.Value > currentNumber ? "high" : "low";
+            guessVerifyText.text = $"Too {highOrLow}!";
+            guessVerifyColour.color = colourIncorrect;
         }
 
 
@@ -175,8 +188,11 @@ public class GameManager : MonoBehaviour
 
     void DisplayBestGuess()
     {
-        string highOrLow = bestGuess.Value > currentNumber ? "high" : "small";
-        infoText.text = $"Best guess is too {highOrLow} at {bestGuess.Value} by {bestGuess.Key}!!!";
+        string highOrLow = bestGuess.Value > currentNumber ? "high" : "low";
+        guesserText.text = $"Best guess by {bestGuess.Key}:";
+        guessNumberText.text = bestGuess.Value.ToString();
+        guessVerifyText.text = $"Too {highOrLow}!";
+        guessVerifyColour.color = colourIncorrect;
         guessBarText.text = $"Best Guess ({bestGuess.Value})";
         guessBar.SendMessage("ChangeValue", bestGuess.Value);
     }
@@ -199,8 +215,8 @@ public class GameManager : MonoBehaviour
     {
         // Prevent guesses and display the status
         started = false;
-        infoText.text = "Starting next game...";
-        commandInfoText.text = "Get ready to !guess";
+        guesserText.text = "Starting next game...";
+        guessNumberText.text = "Get ready to !guess";
 
         // Reset displaying guesses state
         displayingGuess = false;
@@ -224,9 +240,12 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         yield return new WaitUntil(() => generatedBar.GetComponent<Change3DBarValue>().idle && guessBar.GetComponent<Change3DBarValue>().idle);
 
-        // Set the text
-        infoText.text = "No Guesses! Be the first to guess!";
-        commandInfoText.text = "Guess with !guess";
+        // Reset the guess info
+        guesserText.text = "No guesses...";
+        guessNumberText.text = "0-1000";
+        guessVerifyText.text = "Be the first to guess!";
+        guessVerifyColour.color = colourYield;
+        //commandInfoText.text = "Guess with !guess";
 
         // Started!!!
         started = true;

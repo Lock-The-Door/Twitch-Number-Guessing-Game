@@ -222,7 +222,7 @@ public class GameManager : MonoBehaviour
         generatedBar.SendMessage("ChangeValue", predefinedNumber);
         generatedBarText.text = "The Unknown Number";
         yield return new WaitForSeconds(1);
-        yield return new WaitUntil(() => generatedBar.GetComponent<ChangeBarValue>().idle && guessBar.GetComponent<ChangeBarValue>().idle);
+        yield return new WaitUntil(() => generatedBar.GetComponent<Change3DBarValue>().idle && guessBar.GetComponent<Change3DBarValue>().idle);
 
         // Set the text
         infoText.text = "No Guesses! Be the first to guess!";

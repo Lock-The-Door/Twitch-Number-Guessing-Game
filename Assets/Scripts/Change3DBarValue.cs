@@ -35,7 +35,7 @@ public class Change3DBarValue : MonoBehaviour
 
     void ChangeValue(float value)
     {
-        endScaleValue = value * 0.005f;
+        endScaleValue = value * 0.008f;
         startValue = gameObject.GetComponent<SpriteRenderer>().size.y;
 
         idle = false;

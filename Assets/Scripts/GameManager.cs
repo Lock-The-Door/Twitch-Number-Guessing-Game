@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     // Objects and Stuff
     public new Camera camera;
     public LeaderboardUpdater LeaderboardUpdater;
-    public QueuedGuesses guessesUi;
+    public VisualQueueManager guessesUi;
     public TwitchClient tc;
     public GameObject ControlPanel;
     public GameObject generatedBar;

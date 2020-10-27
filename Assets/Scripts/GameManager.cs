@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public GameObject generatedBar;
     public TextMeshProUGUI generatedBarText;
     public GameObject guessBar;
+    public float lerpSpeed = 1;
     public TextMeshProUGUI guessBarText;
     public TextMeshProUGUI guessNumberText;
     public TextMeshProUGUI guesserText;
@@ -119,11 +120,12 @@ public class GameManager : MonoBehaviour
         string name = tc.GetDisplayName(nextGuess.Key).Result;
 
         guesserText.text = $"{name} guessed:";
-        guessNumberText.text = nextGuess.Value.ToString();
         guessBarText.text = $"{name}'s guess";
         guessVerifyText.text = "...";
         guessVerifyColour.color = colourYield;
         guessBar.SendMessage("ChangeValue", nextGuess.Value);
+
+        StartCoroutine(guessInfoAnimate(nextGuess.Value)); // Do animations
 
         UpdateLeaderboard(nextGuess.Key, LeaderboardUpdater.LeaderboardType.MostGuesses); // Update Leaderboard
 
@@ -165,6 +167,43 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    IEnumerator guessInfoAnimate(int guessNumber)
+    {
+        float lerpTime = 0;
+        var guesserRect = guesserText.gameObject.GetComponent<RectTransform>();
+        float guesserRectMaxX = guesserRect.offsetMax.x;
+        while (lerpTime < lerpSpeed)
+        {
+            lerpTime += Time.deltaTime;
+            if (lerpTime > lerpSpeed)
+                lerpTime = lerpSpeed;
+            float t = lerpTime / lerpSpeed;
+            t = t * t * t * (t * (6f * t - 15f) + 10f);
+
+            guessNumberText.color = new Color(guessNumberText.color.r, guessNumberText.color.g, guessNumberText.color.b, Mathf.Lerp(1, 0, t));// text lerp alpha
+            guesserRect.offsetMin = new Vector2(guesserRect.offsetMin.x, Mathf.Lerp(5.5f, 3, t));
+            guesserRect.offsetMax = new Vector2(Mathf.Lerp(guesserRectMaxX, -0.5f, t), guesserRect.offsetMax.y);
+
+            yield return new WaitForEndOfFrame();
+        }
+        guessNumberText.text = guessNumber.ToString();
+        lerpTime = 0;
+        while (lerpTime < lerpSpeed)
+        {
+            lerpTime += Time.deltaTime;
+            if (lerpTime > lerpSpeed)
+                lerpTime = lerpSpeed;
+            float t = lerpTime / lerpSpeed;
+            t = t * t * t * (t * (6f * t - 15f) + 10f);
+
+            guessNumberText.color = new Color(guessNumberText.color.r, guessNumberText.color.g, guessNumberText.color.b, Mathf.Lerp(0, 1, t));// text lerp alpha
+            guesserRect.offsetMin = new Vector2(guesserRect.offsetMin.x, Mathf.Lerp(3, 5.5f, t));
+            guesserRect.offsetMax = new Vector2(Mathf.Lerp(-0.5f, -4, t), guesserRect.offsetMax.y);
+
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     void UpdateLeaderboard(string id, LeaderboardUpdater.LeaderboardType type)
     {
         switch (type)
@@ -190,11 +229,13 @@ public class GameManager : MonoBehaviour
     {
         string highOrLow = bestGuess.Value > currentNumber ? "high" : "low";
         guesserText.text = $"Best guess by {bestGuess.Key}:";
-        guessNumberText.text = bestGuess.Value.ToString();
         guessVerifyText.text = $"Too {highOrLow}!";
         guessVerifyColour.color = colourIncorrect;
         guessBarText.text = $"Best Guess ({bestGuess.Value})";
         guessBar.SendMessage("ChangeValue", bestGuess.Value);
+
+        if (guessNumberText.text != bestGuess.Value.ToString())
+            StartCoroutine(guessInfoAnimate(bestGuess.Value));
     }
 
     int DistanceFromNumber(int guess)

@@ -2566,12 +2566,12 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 1
+  m_fontSize: 1.3
   m_fontSizeBase: 1
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 0.3
-  m_fontSizeMax: 1
+  m_fontSizeMax: 5
   m_fontStyle: 0
   m_textAlignment: 257
   m_characterSpacing: 0
@@ -4364,6 +4364,7 @@ MonoBehaviour:
   generatedBar: {fileID: 1935031906}
   generatedBarText: {fileID: 1210387615}
   guessBar: {fileID: 814936399}
+  lerpSpeed: 1
   guessBarText: {fileID: 1119961355}
   guessNumberText: {fileID: 1314752187}
   guesserText: {fileID: 758848558}

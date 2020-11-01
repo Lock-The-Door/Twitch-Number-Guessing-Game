@@ -13,6 +13,7 @@ public class LeaderboardUpdater : MonoBehaviour
     public float switchRate;
     public float guiMoveSpeed;
 
+    public static string loadedLeaderboardName;
     //public static List<KeyValuePair<string, ulong>> mostWins = new List<KeyValuePair<string, ulong>>();
     //public static List<KeyValuePair<string, ulong>> mostGuesses = new List<KeyValuePair<string, ulong>>();
     public static Dictionary<string, ulong> mostWins = new Dictionary<string, ulong>();
@@ -33,10 +34,12 @@ public class LeaderboardUpdater : MonoBehaviour
         {
             yield return FadeLeaderboard(false);
             LoadLeaderboard(mostWins, "Most Wins\n(All Time)");
+            loadedLeaderboardName = "Most Wins (All Time)";
             yield return FadeLeaderboard(true);
             yield return new WaitForSeconds(switchRate);
             yield return FadeLeaderboard(false);
             LoadLeaderboard(mostGuesses, "Most Guesses\n(All Time)");
+            loadedLeaderboardName = "Most Guesses (All Time)";
             yield return FadeLeaderboard(true);
             yield return new WaitForSeconds(switchRate);
         }

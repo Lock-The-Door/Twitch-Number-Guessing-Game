@@ -9,7 +9,6 @@ using UnityEngine;
 
 public class LeaderboardUpdater : MonoBehaviour
 {
-    public TextMeshProUGUI Leaderboard;
     public TwitchClient tc;
     public float switchRate;
     public float guiMoveSpeed;
@@ -19,8 +18,6 @@ public class LeaderboardUpdater : MonoBehaviour
     public static Dictionary<string, ulong> mostWins = new Dictionary<string, ulong>();
     public static Dictionary<string, ulong> mostGuesses = new Dictionary<string, ulong>();
     //public KeyValuePair<string, double> mostAccurate;
-
-    public LeaderboardType leaderboardType = LeaderboardType.MostWins;
 
     private void Start()
     {
@@ -34,89 +31,64 @@ public class LeaderboardUpdater : MonoBehaviour
         yield return new WaitUntil(() => tc.api.Settings.AccessToken != null);
         while (true)
         {
-            LoadLeaderboard(LeaderboardType.MostWins);
+            yield return FadeLeaderboard(false);
+            LoadLeaderboard(mostWins, "Most Wins\n(All Time)");
+            yield return FadeLeaderboard(true);
             yield return new WaitForSeconds(switchRate);
-            LoadLeaderboard(LeaderboardType.MostGuesses);
+            yield return FadeLeaderboard(false);
+            LoadLeaderboard(mostGuesses, "Most Guesses\n(All Time)");
+            yield return FadeLeaderboard(true);
             yield return new WaitForSeconds(switchRate);
         }
     }
 
-    public enum LeaderboardType
+    IEnumerator FadeLeaderboard(bool fadeIn)
     {
-        MostWins,
-        MostGuesses,
-        MostAccurate
+        float originTransparency = fadeIn ? 0 : 1;
+        float targetTransparency = fadeIn ? 1 : 0;
+        float lerpTime = 0;
+
+        while (lerpTime < guiMoveSpeed)
+        {
+            lerpTime += Time.deltaTime;
+            if (lerpTime > guiMoveSpeed)
+                lerpTime = guiMoveSpeed;
+            float t = lerpTime / guiMoveSpeed;
+            t = t * t * t * (t * (6f * t - 15f) + 10f);
+
+            // lerp transparency on header
+            var headerText = transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+            headerText.color = new Color(headerText.color.r, headerText.color.g, headerText.color.b, Mathf.Lerp(originTransparency, targetTransparency, t));
+            // lerp leaderboard values
+            for (int placement = 0; placement < 10; placement++)
+            {
+                Transform panel = transform.GetChild(1).GetChild(placement);
+
+                var valueText = panel.GetChild(1).GetComponent<TextMeshProUGUI>();
+                var usernameText = panel.GetChild(2).GetComponent<TextMeshProUGUI>();
+
+                valueText.color = new Color(valueText.color.r, valueText.color.g, valueText.color.b, Mathf.Lerp(originTransparency, targetTransparency, t));
+                usernameText.color = new Color(usernameText.color.r, usernameText.color.g, usernameText.color.b, Mathf.Lerp(originTransparency, targetTransparency, t));
+            }
+
+            yield return new WaitForEndOfFrame();
+        }
     }
 
-    public void LoadLeaderboard(LeaderboardType type)
+    public void LoadLeaderboard(Dictionary<string, ulong> leaderboardDictionary, string leaderboardType)
     {
         SortLeaderboards();
 
-        string leaderboard = "";
+        transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>().text = leaderboardType;
 
-        switch (type)
+        for (int placement = 0; placement < 10; placement++)
         {
-            case LeaderboardType.MostWins:
-                leaderboard = "<b><size=50>Most Wins</size></b>\n";
-                for (int i = 0; i < 10; i++)
-                {
-                    leaderboard += (i + 1) + ". ";
-                    if (mostWins.Count > i)
-                    {
-                        string id = mostWins.ElementAt(i).Key;
-                        string displayName = tc.GetDisplayName(id).Result;
-                        leaderboard += displayName + " - " + mostWins[id];
-                    }
-                    if (i != 10)
-                        leaderboard += "\n";
-                }
-                break;
-            case LeaderboardType.MostGuesses:
-                leaderboard = "<b><size=50>Most Guesses</size></b>\n";
-                for (int i = 0; i < 10; i++)
-                {
-                    leaderboard += (i + 1) + ". ";
-                    if (mostGuesses.Count > i)
-                    { 
-                        string id = mostGuesses.ElementAt(i).Key;
-                        string displayName = tc.GetDisplayName(id).Result;
-                        leaderboard += displayName + " - " + mostGuesses[id];
-                    }
-                    if (i != 10)
-                        leaderboard += "\n";
-                }
-                break;
-            case LeaderboardType.MostAccurate:
-                break;
-        }
+            Transform panel = transform.GetChild(1).GetChild(placement);
+            var placementValues = leaderboardDictionary.ElementAt(placement);
+            string username = tc.GetDisplayName(placementValues.Key).Result;
 
-        StartCoroutine(changeLeaderboardInfoText(leaderboard, type));
-    }
-
-    IEnumerator changeLeaderboardInfoText(string newtext, LeaderboardType type)
-    {
-        if (leaderboardType == type)
-            Leaderboard.text = newtext;
-        else
-        {
-            leaderboardType = type;
-            var start = -835;
-            var destination = -1605;
-            yield return moveGui(destination);
-            Leaderboard.text = newtext;
-            yield return moveGui(start);
-        }
-    }
-
-    IEnumerator moveGui(float destination)
-    {
-        float start = Leaderboard.rectTransform.localPosition.x;
-        float time = 0;
-        while (time < 1)
-        {
-            Leaderboard.rectTransform.localPosition = new Vector3(Mathf.SmoothStep(start, destination, time), Leaderboard.rectTransform.localPosition.y, 0);
-            time += Time.deltaTime * guiMoveSpeed;
-            yield return new WaitForFixedUpdate();
+            panel.GetChild(1).GetComponent<TextMeshProUGUI>().text = placementValues.Value.ToString(); // Put in the value text
+            panel.GetChild(2).GetComponent<TextMeshProUGUI>().text = username; // Put in the username
         }
     }
 

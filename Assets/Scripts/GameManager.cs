@@ -127,14 +127,14 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(guessInfoAnimate(nextGuess.Value)); // Do animations
 
-        UpdateLeaderboard(nextGuess.Key, LeaderboardUpdater.mostGuesses, "Most Guesses (All Time)"); // Update Leaderboard
+        UpdateLeaderboard(nextGuess.Key, LeaderboardUpdater.leaderboardDatas.FindAll(data => data.typeName == "Most Guesses" && data.timeframeName != "(Last Week)")); // Update Leaderboard
 
         yield return new WaitForSeconds(1);
         yield return new WaitUntil(() => guessBar.GetComponent<Change3DBarValue>().idle);
         yield return new WaitForSeconds(1);
         if (nextGuess.Value == currentNumber) // The number is correct, restart
         {
-            UpdateLeaderboard(nextGuess.Key, LeaderboardUpdater.mostWins, "Most Wins (All Time)"); // Update Leaderboard
+            UpdateLeaderboard(nextGuess.Key, LeaderboardUpdater.leaderboardDatas.FindAll(data => data.typeName == "Most Wins" && data.timeframeName != "(Last Week)")); // Update Leaderboard
             guessVerifyText.text = "Correct!";
             guessVerifyColour.color = colourCorrect;
             generatedBarText.text = "The number was " + currentNumber;
@@ -204,25 +204,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void UpdateLeaderboard(string id, Dictionary<string, ulong> leaderboard, string leaderBoardName)
+    void UpdateLeaderboard(string id, List<LeaderboardData> leaderboards, ulong valueToAdd = 1)
     {
-        switch (leaderBoardName)
+        foreach (LeaderboardData leaderboard in leaderboards)
         {
-            case "Most Wins (All Time)":
-                ulong oldWins;
-                LeaderboardUpdater.mostWins.TryGetValue(id, out oldWins);
-                LeaderboardUpdater.mostWins[id] = ++oldWins;
-                break;
-            case "Most Guesses (All Time)":
-                ulong oldGuesses;
-                LeaderboardUpdater.mostGuesses.TryGetValue(id, out oldGuesses);
-                LeaderboardUpdater.mostGuesses[id] = ++oldGuesses;
-                break;
-        }
+            leaderboard.data.TryGetValue(id, out ulong oldValue);
+            leaderboard.data[id] = oldValue + valueToAdd;
 
-        LeaderboardUpdater.SaveStats();
-        if (LeaderboardUpdater.loadedLeaderboardName == leaderBoardName)
-            LeaderboardUpdater.LoadLeaderboard(leaderboard, leaderBoardName);
+            LeaderboardUpdater.SaveStats();
+            if (LeaderboardUpdater.loadedLeaderboardName == leaderboard.fullName)
+                LeaderboardUpdater.LoadLeaderboard(leaderboard);
+        }
     }
 
     void DisplayBestGuess()

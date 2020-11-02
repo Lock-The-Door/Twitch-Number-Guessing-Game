@@ -12923,9 +12923,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tc: {fileID: 831379311}
-  switchRate: 20
+  switchRate: 2
   guiMoveSpeed: 1
-  save: 0
+  save: 1
 --- !u!1 &2022761571
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@ public class SettingsUpdater : MonoBehaviour
 {
     public Toggle limitGuesses;
     public TMP_Dropdown displayDropdown;
+    public TMP_InputField frameRateInput;
 
     private int currentDisplay = 0;
 
@@ -13,6 +14,8 @@ public class SettingsUpdater : MonoBehaviour
 
     private void Start()
     {
+        GetComponent<Canvas>().sortingLayerName = "Top";
+
         // Show saved settings
         currentDisplay = PlayerPrefs.GetInt("UnitySelectMonitor");
 
@@ -31,6 +34,8 @@ public class SettingsUpdater : MonoBehaviour
         displayDropdown.AddOptions(displays);
 
         displayDropdown.value = currentDisplay;
+
+        frameRateInput.text = PlayerPrefs.GetInt("FrameRate", 60).ToString();
     }
 
     private void OnDestroy()
@@ -44,6 +49,15 @@ public class SettingsUpdater : MonoBehaviour
     {
         GameManager.SingleGuessQueue = newValue;
         PlayerPrefs.SetString("Single Guess Queue", newValue.ToString());
+    }
+
+    void changeFrameRate(string newFrameRateText)
+    {
+        if (int.TryParse(newFrameRateText, out int newFrameRate))
+        {
+            Application.targetFrameRate = newFrameRate;
+            PlayerPrefs.SetInt("FrameRate", newFrameRate);
+        }
     }
 
     void ChangeDisplays()

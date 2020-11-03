@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
         // Load settings
         if (PlayerPrefs.HasKey("Single Guess Queue"))
             SingleGuessQueue = bool.Parse(PlayerPrefs.GetString("Single Guess Queue"));
+        Application.targetFrameRate = PlayerPrefs.GetInt("FrameRate", 60);
 
         // Set bars to 0
         generatedBar.SendMessage("ChangeValue", value: 0);

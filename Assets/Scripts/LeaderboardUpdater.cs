@@ -141,7 +141,7 @@ public class LeaderboardUpdater : MonoBehaviour
             weeklyReset = nextWeek;
 
             // Reset leaderboards and move this week to last week
-            weeklyLeaderboardArchives.Add(DateTime.Now, leaderboardDatas.FindAll(leaderboards => leaderboards.timeframeName == "(Weekly)")); // make archive
+            //weeklyLeaderboardArchives.Add(DateTime.Now, leaderboardDatas.FindAll(leaderboards => leaderboards.timeframeName == "(Weekly)")); // make archive
 
             List<LeaderboardData> lastWeekLeaderboards = leaderboardDatas.FindAll(leaderboards => leaderboards.timeframeName == "(Last Week)");
             foreach (LeaderboardData leaderboard in lastWeekLeaderboards)
